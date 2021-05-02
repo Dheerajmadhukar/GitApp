@@ -30,8 +30,6 @@ Usage() {
 }
 main() {
 [ "$silent" == False ] && curl -ks "https://grep.app/api/search?q=$domain&words=true" | jq -r '.facets.lang.buckets[] | .val,.count' | sed 'N;s/\n/ /' | tee /tmp/found-gitapp
-        #curl -ks "https://grep.app/api/search?q=$domain&words=true" | jq -r '.facets.lang.buckets[] | .val,.count' | awk 'NR%16 {printf("%s", " " $0); next}{print $0}'
-        #curl -ks "https://grep.app/api/search?q=$domain&words=true" | jq -r '.hits.hits[] | {repo:.repo.raw, path:.path.raw} | select(.repo != null and .path != null)'
 [ "$silent" == False ] && echo "👊👊👊👊👊👊👊👊👊"
 cat /tmp/found-gitapp | awk '{print $1}' | while read -r line;do z=1; while [ $z -gt 0 ];do out=$(curl -ks "https://grep.app/api/search?q=$domain&words=true&page=$z&f.lang=$line" | jq -r '.hits.hits[].id.raw' | sed -e 's/^g/https:\/\/github.com/g' -e 's|/|/blob/master/|5');if [ -z "$out" ];then z=0;else echo "$out"&&z=$[$z+1];fi;done&&echo "----------------";done
 }
